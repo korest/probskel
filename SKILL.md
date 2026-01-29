@@ -362,10 +362,75 @@ When triggered:
 | **What they did well** | Correct approach, clean code, good naming |
 | **Data structures** | Optimal choice? (dict for O(1) lookup, set for membership, heapq for top-k) |
 | **Complexity** | Time/space optimal? What's the bottleneck? Unnecessary copies? |
+| **Language best practices** | Idiomatic patterns for the language (see checklist below) |
 | **Concurrency** | Proper semaphores/locks? Race conditions? Backpressure handling? |
 | **Retry logic** | Exponential backoff? Max retries? Distinguishes retryable vs non-retryable errors? |
 | **Error handling** | Fails gracefully? Specific exceptions? Proper cleanup? |
 | **Production readiness** | See checklist below |
+
+#### Language-Specific Best Practices Checklist
+
+**Python:**
+| Practice | Instead of | Use |
+|----------|------------|-----|
+| **List comprehension** | `for` loop appending to list | `[x*2 for x in items]` |
+| **Dict comprehension** | `for` loop building dict | `{k: v for k, v in pairs}` |
+| **Set comprehension** | `for` loop adding to set | `{x for x in items if x > 0}` |
+| **Generator expression** | List comprehension when iterating once | `sum(x*2 for x in items)` |
+| **str.join()** | Concatenation in loop | `', '.join(strings)` |
+| **f-strings** | `%` formatting or `.format()` | `f"Hello {name}"` |
+| **Context managers** | Manual open/close | `with open(f) as file:` |
+| **enumerate()** | Manual index tracking | `for i, item in enumerate(items):` |
+| **zip()** | Parallel index iteration | `for a, b in zip(list1, list2):` |
+| **any()/all()** | Loop with flag variable | `any(x > 0 for x in items)` |
+| **defaultdict/Counter** | Manual dict initialization | `from collections import defaultdict` |
+| **Unpacking** | Index access | `first, *rest = items` |
+| **Walrus operator** | Separate assignment and condition | `if (n := len(items)) > 10:` |
+| **pathlib** | String path manipulation | `from pathlib import Path` |
+
+**TypeScript/JavaScript:**
+| Practice | Instead of | Use |
+|----------|------------|-----|
+| **Array methods** | `for` loops | `.map()`, `.filter()`, `.reduce()` |
+| **Template literals** | String concatenation | `` `Hello ${name}` `` |
+| **Destructuring** | Repeated property access | `const { name, age } = user` |
+| **Spread operator** | Manual copying | `[...arr1, ...arr2]` |
+| **Optional chaining** | Nested null checks | `user?.address?.city` |
+| **Nullish coalescing** | `\|\|` for defaults | `value ?? defaultValue` |
+| **Object shorthand** | `{name: name}` | `{name}` |
+| **Array.from()** | Manual iteration | `Array.from(nodeList)` |
+| **Set for uniqueness** | Manual deduplication | `[...new Set(items)]` |
+| **Promise.all()** | Sequential awaits | `await Promise.all(promises)` |
+| **async/await** | `.then()` chains | `const result = await fetch()` |
+| **const/let** | `var` | Prefer `const`, use `let` when reassigning |
+
+**Go:**
+| Practice | Instead of | Use |
+|----------|------------|-----|
+| **Error wrapping** | Plain error return | `fmt.Errorf("context: %w", err)` |
+| **defer for cleanup** | Manual cleanup calls | `defer file.Close()` |
+| **errors.Is/As** | String comparison | `errors.Is(err, ErrNotFound)` |
+| **strings.Builder** | String concatenation | `var b strings.Builder` |
+| **make() with capacity** | Growing slices | `make([]int, 0, expectedLen)` |
+| **Range over slice** | Index-based iteration | `for i, v := range items` |
+| **Named return values** | Explicit returns in defer | `func f() (err error)` |
+| **Embed for composition** | Inheritance patterns | Struct embedding |
+| **Table-driven tests** | Repeated test functions | `tests := []struct{...}` |
+| **Context for cancellation** | Manual timeouts | `ctx, cancel := context.WithTimeout()` |
+
+**Rust:**
+| Practice | Instead of | Use |
+|----------|------------|-----|
+| **Iterator methods** | Manual loops | `.iter().map().filter().collect()` |
+| **? operator** | Match on Result/Option | `let value = result?;` |
+| **if let / while let** | Full match for single variant | `if let Some(x) = opt {}` |
+| **Destructuring** | Field-by-field access | `let Point { x, y } = point;` |
+| **String slices** | Owned strings when borrowing | `fn f(s: &str)` vs `fn f(s: String)` |
+| **collect() with turbofish** | Manual collection building | `items.collect::<Vec<_>>()` |
+| **Entry API** | Contains + insert | `map.entry(k).or_insert(v)` |
+| **Clone on write** | Unnecessary cloning | `Cow<str>` for optional ownership |
+| **derive macros** | Manual trait impls | `#[derive(Debug, Clone)]` |
+| **impl Into/AsRef** | Concrete types in params | Generic over input types |
 
 #### Production Readiness Checklist
 
