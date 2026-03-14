@@ -13,7 +13,7 @@ The skill creates a skeleton (stub code) and a full test suite for any problem y
 ## Usage
 
 ```
-/probskel <problem> [--level low|mid|high] [--stages] [--async|--threaded]
+/probskel <problem> [--level low|mid|high] [--stages] [--async|--threaded] [--pair] [--socratic]
 ```
 
 **Examples:**
@@ -22,6 +22,9 @@ The skill creates a skeleton (stub code) and a full test suite for any problem y
 /probskel LRU cache --level high
 /probskel LRU cache --stages
 /probskel web crawler --async
+/probskel LRU cache --pair
+/probskel two-sum --pair --hint low
+/probskel rate limiter --socratic
 ```
 
 ## Levels (Guidance Amount)
@@ -55,6 +58,22 @@ pytest tests/test_lru_cache_stage2.py  # After stage 1 passes
 pytest tests/test_lru_cache_stage3.py  # Full solution
 ```
 
+## Pair Programming Mode
+
+Use `--pair` to get a senior pair programming partner after skeleton generation. Instead of solving alone, you work through the implementation step by step with guided feedback.
+
+- **`--pair`** — Collaborative style (default). Shares reasoning openly, explains trade-offs, points out patterns — like working with a senior colleague.
+- **`--socratic`** — Question-driven style. Leads with targeted questions to help you discover the answer yourself.
+
+Both modes are independent of `--level` — combine them freely.
+
+### Workflow with `--pair`
+
+1. `/probskel LRU cache --pair` → generates skeleton + tests
+2. "Let's start" → AI breaks implementation into steps and guides you through each one
+3. Write code for each step → get feedback on what works, what to improve, and why
+4. After all steps → automatic full analysis
+
 ## Tests
 
 Generated tests cover:
@@ -66,7 +85,7 @@ Generated tests cover:
 ## Workflow
 
 1. `/probskel binary search` → generates skeleton + tests
-2. Implement your solution
+2. Implement your solution (or use `--pair` for guided implementation)
 3. `pytest` → run tests
 4. "how did I do?" → get analysis and feedback
 

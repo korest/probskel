@@ -1,6 +1,6 @@
 ---
 name: probskel
-description: Generate coding problem skeletons with comprehensive tests. Use when user wants to practice a coding problem, create a kata, set up TDD for an algorithm challenge, or review their solution. Supports hints (low/mid/high) and concurrency modes (async/threaded).
+description: Generate coding problem skeletons with comprehensive tests. Use when user wants to practice a coding problem, create a kata, set up TDD for an algorithm challenge, or review their solution. Supports hints (low/mid/high), concurrency modes (async/threaded), and pair programming mode.
 ---
 
 # Problem Skeleton Generator
@@ -8,7 +8,7 @@ description: Generate coding problem skeletons with comprehensive tests. Use whe
 ## Usage
 
 ```
-/probskel <problem description> [--hint low|mid|high] [--lang <language>] [--async|--threaded] [--levels]
+/probskel <problem description> [--hint low|mid|high] [--lang <language>] [--async|--threaded] [--levels] [--pair] [--socratic]
 ```
 
 ## Instructions
@@ -20,6 +20,8 @@ description: Generate coding problem skeletons with comprehensive tests. Use whe
 - **Language**: `--lang <language>` or detect from project files
 - **Concurrency**: `--async`, `--threaded`, or auto-detect
 - **Levels**: `--levels` to split into progressive difficulty levels
+- **Pair**: `--pair` to enable pair programming mode (collaborative by default)
+- **Socratic**: `--socratic` to use question-driven pair style (implies `--pair`)
 
 ### Step 2: Detect Language
 
@@ -339,7 +341,60 @@ Print summary showing:
 - Command to run tests (`pytest`, `npm test`, `go test`)
 - Reminder: "ask 'review my solution' or 'how did I do?' for analysis"
 
-### Step 8: Analysis Mode
+### Step 8: Pair Programming Mode (when `--pair` or `--socratic` used)
+
+After skeleton generation and output summary, suggest pair programming:
+
+> "When you're ready, I can walk you through the implementation step by step as your pair programming partner."
+
+**Do NOT auto-start.** Wait for the user to explicitly ask to begin.
+
+#### Starting a Pair Session
+
+When the user asks to start:
+
+1. Read the generated skeleton and tests.
+2. Break the implementation into logical steps (e.g., for LRU Cache: "constructor → `get` → `put` → eviction helper").
+3. Present the first step with reasoning: "Let's start with the constructor — it sets up the data structures everything else depends on."
+4. Wait for the user to write their code.
+
+#### After Each Step
+
+1. Read the user's code.
+2. Run the relevant tests if possible.
+3. Review:
+   - What they got right and why it works.
+   - What could be improved and **why** — explain the reasoning, don't just say "change X to Y."
+   - If a language-specific idiom applies, show the pattern and explain when to reach for it.
+4. When the step is solid, present the next one.
+
+#### Collaborative Style (default with `--pair`)
+
+Act like a senior colleague at a whiteboard:
+
+- **Share reasoning openly**: "I'd reach for an OrderedDict here because it gives us O(1) move-to-end, which we need for the LRU update."
+- **Explain trade-offs**: "You could use a plain dict + doubly linked list instead — more code but avoids the OrderedDict overhead. For this problem either works."
+- **Point out patterns in context**: "This is a good spot for a context manager — if the file open fails, your lock never gets released."
+- **Give honest feedback**: If something works but isn't great, say so directly. Don't pad with unnecessary praise.
+- **Explain new concepts when they arise**: If you suggest using a technique or pattern the user might not know, explain it the way you'd explain it to a colleague — concisely, with the "why" front and center.
+
+#### Socratic Style (`--socratic`)
+
+Lead with questions, let the user discover answers:
+
+- **Ask targeted questions**: "What data structure gives you O(1) lookup by key?" / "What happens to your cache when it's full and you call `put`?"
+- **Only explain directly when the user is stuck** or explicitly asks.
+- **Ask the user to predict behavior**: "Before we run the tests — what do you think will happen with this edge case?"
+- **Gradually reduce guidance** as the user demonstrates understanding.
+
+#### Finishing the Pair Session
+
+After all steps are implemented:
+- Run the full test suite.
+- Transition naturally into Analysis Mode (Step 9) for a holistic review.
+- Include the language-specific best practices checklist in the review.
+
+### Step 9: Analysis Mode
 
 **Trigger phrases** (use this skill's analysis mode when user says any of these):
 - "how did I do?"
